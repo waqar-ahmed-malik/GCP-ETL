@@ -1,0 +1,6 @@
+select case when SOURCE_COUNT = TARGET_COUNT
+THEN "true"
+else "false"
+END
+from LANDING.DATA_LOAD_AUDIT
+WHERE JOB_ID = 4  AND EXTRACT( DATE FROM JOB_PROCESS_DTTIME) = current_date()

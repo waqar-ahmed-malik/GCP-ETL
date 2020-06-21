@@ -1,0 +1,17 @@
+steps:
+#- name: 'gcr.io/cloud-builders/gsutil'
+#  args: ['cp', '-r', './', 'gs://us-central1-composer-prod-e0024e92-bucket/data']
+#  - name: 'gcr.io/cloud-builders/gsutil'
+#  args: ['cp', '-r', './', 'gs://aaa-dwh-test-gcs-repo-1/data']
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    mv GCPDWH/dags .
+    gsutil -m cp -r dags gs://shared-builderprod-bucket01/dwh
+    cd GCPDWH
+    ls -all
+    #gsutil -m cp -r * gs://shared-builderprod-bucket01/dwh/data
+    
+logsBucket: 'gs://shared-builderprod-bucket01/buildlogs/dwh/prod'

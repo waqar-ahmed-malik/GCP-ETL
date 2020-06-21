@@ -1,0 +1,39 @@
+steps:
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    gsutil cp gs://shared-builderpreprod-bucket09750/sonarcloud/sonarcloud_DWH_key.encrypted .
+    gcloud kms decrypt --location global --keyring aaa-devops-keyring --key aaa-devops-cryptokey --ciphertext-file sonarcloud_DWH_key.encrypted --plaintext-file sonarcloud_DWH_key
+# Sonar analysis analysis can be enabled only on develop branch
+- name: 'gcr.io/aaa-shared-builderpreprod/custom_image_sonarcloud-linux:v02'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    sonar-scanner -Dsonar.projectKey=DWH-key -Dsonar.organization=github-svc-acct -Dsonar.exclusions=**.sql,GCPDWH/archive/* -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$(cat sonarcloud_DWH_key) -Dsonar.cpd.py.minimumLines=150
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    dagBucket=gs://us-central1-dev-composer-e06e86ef-bucket/dags
+    dataBucket=gs://us-central1-dev-composer-e06e86ef-bucket/data/GCPDWH
+    keyBucket=gs://us-central1-dev-composer-e06e86ef-bucket/data/jsonkeys
+    mv GCPDWH/dags/ .
+    ls -all dags/*
+    
+    gsutil cp gs://shared-builderpreprod-bucket09750/dwh_json_keys/AAAData-69668e42a7cf.json.encrypted .
+    gsutil cp gs://shared-builderpreprod-bucket09750/dwh_json_keys/aaa-mwg-dwprod-247c8742715c.json.encrypted .
+    gcloud kms decrypt --location global --keyring aaa-devops-keyring --key aaa-devops-cryptokey --ciphertext-file AAAData-69668e42a7cf.json.encrypted --plaintext-file AAAData-69668e42a7cf.json
+    gcloud kms decrypt --location global --keyring aaa-devops-keyring --key aaa-devops-cryptokey --ciphertext-file aaa-mwg-dwprod-247c8742715c.json.encrypted --plaintext-file aaa-mwg-dwprod-247c8742715c.json
+   
+    gsutil cp dags/Dummy_DAG.py $dagBucket
+
+logsBucket: 'gs://shared-builderpreprod-bucket01/buildlogs/dwh/dev'
+
+
+

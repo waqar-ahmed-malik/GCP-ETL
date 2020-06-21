@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "upwork-273613",
+  "private_key_id": "331cbffd83f4e25fd0e7ed04f3e4e3575fc89fa6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC64g4Bdml26sEB\nwkeyEkgXnk2X+gQ9gqiAZSBFeDYWgBtxcJBKuMUYiHDwyIfxVyxj+BKfT43cIQY2\n1OhibKbRL78bIyevkXb4Fhld7HeOtDI9M0i4bUX1T0fDzq5NQ5wlh1opzFbDDwI4\n9EiviQlmX2Pv492JTBbnE4PeV371GCBIKE18fhxDPL8Hf41lZjssIFXi3nxA1aPD\nC29epuExFN+fo3IvJVXKPRQ+f3Y+UTKwrM+znsTl+cu1G8RbfUzLmteeZOmm/QPR\n4Db3EbrFw5DqOrINsqPFBkJmh5IuvTb+QOzhcwE8pvwie7lqd1MIzopRZq0k5fSX\nBPjk9ELtAgMBAAECggEACPdXVUhuM+3i0U5JOU85btfbmi4jh1eRW3Bx1W0FXBv/\n9RF0/GWUBm+ZZGJpBbIftGYoPCt8pcvFBafX95m5Gsucv1UQjnklfGHQpfOpiTFQ\nQPGictko5GWa24qhgAR9fxFyfBN/mb+XfpsKl7cBhyXBejanbNk3nUhcgpp8Qiic\nPiqdFP4V8I8GG+OB+McWo+T5/OH+mz8kGiMQUqU6f7xVV5KrHjyEWYy2/j+vJL39\na/2qbZZNq17OK7SwbJRWUS9jIXOJasYfwTz1CVliFiXSZu8KhXfqTMxoB+LwPey5\n6ruy8DPxfkDJHM8xfdkH9ue+2iRyuOFSCUWh2nPZ0QKBgQDoIBvDdkRyNMY7BIFc\nufiDKihSCCr4n2EjkoJqMEdENp73/dkeHAyiHlJMsALHRocFlZBSMNobsPXVCm4B\nik8inrBPVyO05ykeHDuyUTlJD/g+3xYZxLS6bD+Rnk/e8PSFSQZhRHeEPxOaJeui\ndbXZfX8BxF6SL0m2GOBdIM45FQKBgQDOGrVQIMlB0pd77yAzh1CvGAol6hcrb65P\npG9zTA/pCovEYtA1HHsk+4eaDjU/qQ5/C7M1TDEUYO8XzXajnuA1RVMchQMk8gSf\nhduhqhXxnS5eWWn1MpdLvxeywMMkGtWL6tlHUgG9zIP0/msu5cPX0GzGFkS3ExRy\ndCwGBFAoeQKBgDYpp9DH+9iaL9b9iiHU0wPoBlh9x2kT51qhiQS2Fyr3g8hh1xOL\nf/ckFBgIyd0tu7u11mMXOw1TEUmQkXKSjzyIwqMAtjgz6Ag6lkNZaIB/1XD2JPYG\nTBVjxMF5qzFeD/A5xd9UVn7pKO3DA2R5CuGgws3qwBZkKlLvIwsX6IaxAoGAc47E\nBAYt8UrrBmDflCSVV2bKIdHrZb47ZIoUtvd5oDb6gITKqkyquuSQdg7rSiM2boMX\n2pU6m2tyAs1/bGPi39tbqwzk420SrIJ3z1+25/4yBlJpt0HDVIPy/JVZlD+7ZbSq\nWHOhaFJn1hBj9ip7MOC6bCIGKwN2nmmGWWVHsDkCgYEA1X/mjjawpMOcpO54rvFg\nSNXahPPk+unyVcG7KZGjWl8DUsjIr6z2ne0yrBXdDYsNf0HHsT55v1f/+gryd4t8\nKZ+aIzAFrPaKOAtbMMzMFORiVZigz+rLx6IE0mceyhl3xp99Ox+L2d1cG0HdvGBq\nxyKjXEswASQcpMTBEuqVUac=\n-----END PRIVATE KEY-----\n",
+  "client_email": "test-sftp@upwork-273613.iam.gserviceaccount.com",
+  "client_id": "116709052071721249303",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/test-sftp%40upwork-273613.iam.gserviceaccount.com"
+}

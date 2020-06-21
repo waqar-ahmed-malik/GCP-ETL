@@ -1,0 +1,71 @@
+WITH TOTAL_UNIQUE_MEMBERS AS (
+    SELECT
+        CUST_ID,
+        FIRST_NM,
+        LAST_NM,
+        MEMBER_NUM,
+        INVOICE_DATETIME
+    FROM `COR_ANALYTICS.NAPA_TRACKS`
+    WHERE
+        UPPER(FACILITY) ='BROKAW'
+    GROUP BY
+        CUST_ID,
+        FIRST_NM,
+        LAST_NM,
+        MEMBER_NUM,
+        INVOICE_DATETIME
+),
+MAX_CUST AS (
+    SELECT
+        CUST_ID AS CUS,
+        FIRST_NM AS F_N,
+        LAST_NM AS L_N,
+        MEMBER_NUM AS M_N
+    FROM (
+        SELECT
+            CUST_ID,
+            FIRST_NM,
+            LAST_NM,
+            MEMBER_NUM,
+            MAX(INVOICE_DATETIME)MAX_INVOICE_DATETIME
+        FROM `COR_ANALYTICS.NAPA_TRACKS`
+        WHERE
+            UPPER(FACILITY) ='BROKAW'
+        GROUP BY
+            CUST_ID,
+            FIRST_NM,
+            LAST_NM,
+            MEMBER_NUM
+    )
+    WHERE
+        DATETIME_DIFF(CURRENT_DATETIME(), MAX_INVOICE_DATETIME, DAY) >365
+)
+SELECT
+    COUNT(*) REPEAT_CUST_365
+FROM (
+    SELECT
+        CUST_ID,
+        FIRST_NM,
+        LAST_NM,
+        MEMBER_NUM
+    FROM (
+        SELECT
+            CUST_ID,
+            FIRST_NM,
+            LAST_NM,
+            MEMBER_NUM,
+            TOTAL_UNIQUE_MEMBERS.INVOICE_DATETIME
+        FROM MAX_CUST
+        INNER JOIN TOTAL_UNIQUE_MEMBERS
+        ON TOTAL_UNIQUE_MEMBERS.CUST_ID =MAX_CUST.CUS
+        AND TOTAL_UNIQUE_MEMBERS.FIRST_NM =MAX_CUST.F_N
+        AND TOTAL_UNIQUE_MEMBERS.LAST_NM =MAX_CUST.L_N
+        AND TOTAL_UNIQUE_MEMBERS.MEMBER_NUM =MAX_CUST.M_N
+    )
+    GROUP BY
+        CUST_ID,
+        FIRST_NM,
+        LAST_NM,
+        MEMBER_NUM
+    HAVING COUNT(*) > 1
+)

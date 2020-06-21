@@ -1,0 +1,2 @@
+--Dummy detail SQL file for test
+SELECT * FROM LANDING.ERS_STAGE_SERVICE_TRUCK LIMIT 10

@@ -1,0 +1,4 @@
+  --Audit sql to be put here
+UPDATE LANDING.STAGE_MEMBERSHIP_BILL SET EXCEPTION_FLAG='Y',FILE_GENERATED = 'E', 
+EXCEPTION_REASON=case when EXCEPTION_REASON is null then 'Name on Card/Full Name is missing' ELSE CONCAT(EXCEPTION_REASON,',','Name on Card/Full Name is missing') END
+WHERE (FIRST_NAME is null or LAST_NAME is null) and CAST(CREATE_DTTIME AS DATE)=CURRENT_DATE() AND EVENT_TYPE='BILL2';

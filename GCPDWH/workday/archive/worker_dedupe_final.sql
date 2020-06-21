@@ -1,0 +1,43 @@
+SELECT 
+  WD_ID,
+  empid,
+  row_hash,  
+  (SELECT AS STRUCT
+    file_date, 
+    licenses,
+    company,
+    cost_center,
+    email_address,
+    job_code,
+    language_type_cd,
+    location,
+    Legal_First_Name,
+    Legal_Middle_Name,
+    Legal_Last_Name,
+    Legal_Social_Suffix,
+    Preferred_First_Name,
+    Preferred_Middle_Name,
+    Preferred_Last_Name,
+    Preferred_Suffix,
+    Worker_P_C_3_Digit,
+    Worker_ENT_ID,
+    Worker_Life_ID,
+    Worker_P_C_10_Digit,
+    Worker_Travel_ID,
+    change_effective_dt,
+    phone_num,
+    phone_extsn,
+    PRFS_DESIGS,
+    SUPERVISOR_ID,
+    HIRE_DT,
+    TERMINATION_DT,
+    ORGANIZATION_ID,
+    fileid,
+    EMPLOYEE_STATUS,
+    WORKER_TYPE,
+    SECONDARY_EMAIL,
+    WORKER_AVAYA_ID
+   FROM UNNEST(emp_hist) 
+   ORDER BY file_date LIMIT 1).*
+FROM LANDING.WD_WORKER_DEDUPE_2
+ORDER BY 2,4;

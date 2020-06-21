@@ -1,0 +1,55 @@
+SELECT
+    COUNTIF(WARRANTY_STATUS='INWARRANTY') AS UNDER_WARRANTY,
+    COUNTIF(WARRANTY_STATUS='NOWARRANTY') AS NOT_UNDER_WARRTY
+FROM (
+    SELECT
+        CUSTOMER_MDM_KEY,
+        AG_MT_NUM,
+        PRODUCT_TYPE,
+        VIN,
+        POLICY_STATUS,
+        MODEL_NM,
+        MAKE_NM,
+        UNIT_YEAR,
+        CUR_YEAR,
+        CASE
+            WHEN CUR_YEAR-UNIT_YEAR <=4 THEN 'INWARRANTY'
+            ELSE 'NOWARRANTY'
+            END WARRANTY_STATUS
+    FROM (
+        SELECT
+            CUST.CUSTOMER_MDM_KEY,
+            INS.AGMT_NUM,
+            INS.PRODUCT_TYPE,
+            CUST.POLICY_STATUS,
+            EXTRACT(YEAR FROM CURRENT_DATE()) AS CUR_YEAR
+        FROM `COR_ANALYTICS.INSURANCE_CUSTOMER_DIM` CUST
+        INNER JOIN `COR_ANALYTICS.INSURANCE_DIM` ins
+        ON CUST.AGMT_NUM = INS.AGMT_NUM
+        WHERE
+            UPPER(INS.PRODUCT_TYPE) = 'AUTO'
+            AND UPPER(CUST.POLICY_STATUS) = 'A'
+    ) AS CUST
+    INNER JOIN (
+        SELECT
+            AGMT_NUM AS AG_MT_NUM,
+            VIN,
+            MODEL_NM,
+            MAKE_NM,
+            UNIT_YEAR
+        FROM `COR_ANALYTICS.INSURANCE_UNIT_DETAILS_DIM`
+        WHERE
+            UPPER(PRODUCT_TYPE) = 'AUTO'
+            AND MODEL_NM IS NOT NULL
+            AND MAKE_NM IS NOT NULL
+            AND UNIT_YEAR IS NOT NULL
+        GROUP BY
+            AGMT_NUM,
+            VIN,
+            PRODUCT_TYPE,
+            MODEL_NM,
+            MAKE_NM,
+            UNIT_YEAR
+    ) AS UNIT
+    ON CUST.AGMT_NUM=UNIT.AG_MT_NUM
+)

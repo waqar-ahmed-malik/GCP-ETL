@@ -1,0 +1,19 @@
+steps:
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    # dagBucket=gs://us-central1-dev-composer-e06e86ef-bucket/dags
+    # dataBucket=gs://us-central1-dev-composer-e06e86ef-bucket/data/GCPDWH
+    # keyBucket=gs://us-central1-dev-composer-e06e86ef-bucket/data/jsonkeys
+    # mv GCPDWH/dags/ .
+    # ls -all dags/*
+    # gsutil -m cp -r dags/DAG_GCP_MEMBERSHIP_LOAD.py $dagBucket
+    # gsutil cp dags/DAG_GCP_CLAIMS_LOAD.py $dagBucket
+    # gsutil -m cp -r jsonkeys $keyBucket
+    # cd GCPDWH
+    # ls -all
+    # gsutil -m cp -r * $dataBucket/
+    
+logsBucket: 'gs://shared-builderpreprod-bucket01/buildlogs/dwh/dev'

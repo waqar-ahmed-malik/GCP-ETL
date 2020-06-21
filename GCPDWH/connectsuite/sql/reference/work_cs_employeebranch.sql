@@ -1,0 +1,6 @@
+select
+LTRIM(RTRIM( EMPLOYEE_ID)) AS EMPLOYEE_ID,
+LTRIM(RTRIM( CLUB_CD)) AS CLUB_CD,
+LTRIM(RTRIM( BRANCH)) AS BRANCH,
+LTRIM(RTRIM( ROLE_ID)) AS ROLE_ID
+from [connect_suite_prd].[dbo].[EmployeeBranch]	

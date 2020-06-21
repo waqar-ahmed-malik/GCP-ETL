@@ -1,0 +1,33 @@
+-- FREQUENCY OF SERVICES BASED ON MAKE AND MODEL
+
+SELECT
+    COUNT(*) AS FREQUECNY_OF_SERVICE,
+    MAKE,
+    MODEL
+FROM (
+    SELECT
+        HRO.MAKE,
+        HRO.MODEL,
+        HRO.RO_DATE,
+        HRO.REOPENED_DTTIME,
+        HRO.CLOSED_DTTIME AS RO_CLOSED_DT,
+        HRO.CUST_NO,
+        HL.*
+    FROM `COR_ANALYTICS.RO_WRITER_HRO` HRO
+    LEFT OUTER JOIN (
+        SELECT
+            HLABOR_ID,
+            RO_NO,
+            CATEGORY,
+            DESC_LINES,
+            LOCATION_NO
+        FROM `COR_ANALYTICS.RO_WRITER_HLABOR`
+        ) HL
+    ON
+        HRO.RO_NO = HL.RO_NO
+    WHERE
+        HLABOR_ID IS NOT NULL
+    )
+GROUP BY
+    MAKE,
+    MODEL

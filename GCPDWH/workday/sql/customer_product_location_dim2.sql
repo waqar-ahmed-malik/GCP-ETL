@@ -1,0 +1,108 @@
+WITH base AS (
+  SELECT
+      aa.WD_LOCATION_ID AS LOCATION_ID,
+      aa.LOCATION_NAME AS LOCATION_NM,
+      aa.STR_ADDRESS_1 AS ADDRESS_LINE1,
+      aa.STR_ADDRESS_2 AS ADDRESS_LINE2,
+      aa.STR_ADDRESS_3 AS ADDRESS_LINE3,
+      aa.CITY_NM AS CITY,
+      UPPER(bb.STATE_CD) AS STATE_CD,
+      bb.STATE AS STATE_NM,
+      aa.ZIP_CD AS ZIP_CD,
+      aa.EMAIL_ADDRESS AS EMAIL_ADDRESS,
+      aa.PHONE_NUMBER AS PHONE_NUM,
+      aa.PHONE_EXTNSN AS PHONE_EXTENSION,
+      aa.LOCATION_STATUS AS LOCATION_STATUS,
+      aa.EFFECTIVE_DATE_FOR_LOCATION AS LOCATION_EFFECTIVE_DT,
+      LOCATION_TYPES AS LOCATION_TYPE_CD,
+      CASE 
+        WHEN ARRAY_TO_STRING(aa.LOCATION_TYPES,',') = 'OnlineJoin' THEN 'Internet'
+        WHEN ARRAY_TO_STRING(aa.LOCATION_TYPES,',') = 'Headquarters' THEN 'Main Office'
+        WHEN ARRAY_TO_STRING(aa.LOCATION_TYPES,',') LIKE 'Branch%' THEN 'Field'
+        WHEN ARRAY_TO_STRING(aa.LOCATION_TYPES,',') = 'Call Center' THEN 'Contact Center'
+        WHEN ARRAY_TO_STRING(aa.LOCATION_TYPES,',') = 'Contact Center' THEN 'Contact Center'
+        ELSE 'Other' 
+      END AS CHANNEL_NM,
+      aa.file_date AS start_date,
+      COALESCE(DATE_SUB(LEAD(aa.file_date) OVER (PARTITION BY aa.WD_LOCATION_ID ORDER BY aa.file_date), INTERVAL 1 DAY),'9999-12-31') AS end_date,
+      aa.fileid AS FILE_ID,
+      aa.row_hash,
+      ROW_NUMBER() OVER (PARTITION BY aa.WD_LOCATION_ID ORDER BY aa.file_date DESC) AS rn,
+      ROW_NUMBER() OVER (PARTITION BY aa.WD_LOCATION_ID ORDER BY aa.file_date ASC) AS VERSION,
+      aa.Branch_Number AS BRANCH_NUM ,
+      aa.Business_Site AS BUSINESS_SITE ,
+      aa.Market_Code AS MARKET_CD ,
+      aa.Market AS MARKET ,
+      aa.District_Code AS DISTRICT_CD ,
+      aa.District AS DISTRICT
+  FROM LANDING.LOCATION_COMBINED_PT1 aa
+  LEFT JOIN REFERENCE.STATE_LOOKUP bb ON (UPPER(aa.STATE_CD) = bb.STATE)
+), connectsuite_cs AS (
+  SELECT
+    CLUB_CD,
+    BRANCH,
+    NAME,
+    BRANCH_NUMBER,
+    BRANCH_DESCRIPTION,
+    BRANCH_ADDR1,
+    BRANCH_ADDR2,
+    BRANCH_CITY_NM,
+    BRANCH_STATE_CD,
+    BRANCH_ZIP,
+    BRANCH_COUNTRY_CD,
+    EMPLOYEE_ID,
+    LAST_UPDATE,
+    BRN_KY AS SAM_BRANCH_KEY,
+    BRANCH_PHONE,
+    JOB_RUN_ID,
+    SOURCE_SYSTEM_CD,
+    CREATE_DT
+  FROM REFERENCE.CONNECTSUITE_CS_BRANCH
+), connectsuite_m AS (
+  SELECT 
+    BRN_KY AS CS_M_BRANCH_KEY,
+    BRN_CD,
+    DIV_KY AS DIVISON_KEY
+  FROM REFERENCE.CONNECTSUITE_M_BRANCH
+  WHERE 1=1
+  AND (DIV_KY in (1, 104, 105,106,107, 108) 
+  AND BRN_KY NOT IN (46062,46061))
+)
+SELECT 
+  aa.LOCATION_ID,
+  aa.LOCATION_NM,
+  aa.LOCATION_STATUS,
+  aa.LOCATION_TYPE_CD,
+  aa.LOCATION_EFFECTIVE_DT,
+  dd.CS_M_BRANCH_KEY,
+  dd.DIVISON_KEY,
+  cc.SAM_BRANCH_KEY,
+  aa.CHANNEL_NM,
+  aa.ADDRESS_LINE1,
+  aa.ADDRESS_LINE2,
+  aa.ADDRESS_LINE3,
+  aa.CITY,
+  aa.STATE_CD,
+  aa.STATE_NM,
+  aa.ZIP_CD,
+  aa.PHONE_NUM,
+  aa.PHONE_EXTENSION,
+  CASE 
+    WHEN ARRAY_TO_STRING(aa.LOCATION_TYPE_CD,',')='Contact Center' THEN 'Contact Center' 
+    WHEN ARRAY_TO_STRING(aa.LOCATION_TYPE_CD,',')='Contact Center' THEN 'Contact Center' 
+    ELSE aa.MARKET 
+  END AS LOCATION_HIERARCHY_NM,
+  aa.start_date AS ROW_START_DT,
+  aa.end_date AS ROW_END_DT,
+  CASE WHEN aa.rn = 1 THEN 'Y' ELSE 'N' end AS ACTIVE_FLG,
+  aa.row_hash AS MD5_VALUE,
+  CURRENT_TIMESTAMP() AS UPDATE_DTTIME,
+  aa.FILE_ID
+FROM base aa
+--LEFT JOIN market bb ON (aa.LOCATION_ID = bb.BRANCH_NUM AND (aa.start_date >= bb.start_date AND aa.start_date <= bb.end_date))
+LEFT JOIN connectsuite_cs cc ON (aa.LOCATION_ID = cc.BRANCH_NUMBER)
+LEFT JOIN connectsuite_m dd ON (
+  CASE 
+    WHEN aa.LOCATION_ID = '999' THEN '998' 
+    ELSE aa.LOCATION_ID 
+  END = dd.BRN_CD)

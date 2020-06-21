@@ -1,0 +1,14 @@
+SELECT
+    AVG(CT) AVG_REPEAT_VISITS
+FROM (
+    SELECT
+        CUST_NO,
+        LOCATIONNO,
+        COUNT(*) CT
+    FROM `COR_ANALYTICS.RO_WRITER_HRO`
+    GROUP BY
+        CUST_NO,
+        LOCATIONNO
+    )
+WHERE
+    CT >1

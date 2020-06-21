@@ -1,0 +1,62 @@
+WITH CAR_MODEL AS (
+    SELECT DISTINCT
+        AGRMNT_NUM,
+        MEM_NUM,
+        MODEL_NM,
+        MAKE_NM
+    FROM (
+        SELECT DISTINCT
+            AGMT_NUM AS AGRMNT_NUM,
+            MEMBER_NUM AS MEM_NUM
+        FROM `COR_ANALYTICS.INSURANCE_CUSTOMER_DIM`
+    )
+    INNER JOIN `COR_ANALYTICS.INSURANCE_UNIT_DETAILS_DIM`
+    ON AGRMNT_NUM = AGMT_NUM
+),
+REPEAT AS (
+    SELECT
+        CUST_ID,
+        FIRST_NM,
+        LAST_NM,
+        MEMBER_NUM
+    FROM (
+        SELECT DISTINCT
+            CUST_ID,
+            FIRST_NM,
+            LAST_NM,
+            MEMBER_NUM,
+            INVOICE_DATETIME
+        FROM `COR_ANALYTICS.NAPA_TRACKS`
+        WHERE UPPER(FACILITY) ='BROKAW'
+    )
+    GROUP BY
+        CUST_ID,
+        FIRST_NM,
+        LAST_NM,
+        MEMBER_NUM
+    HAVING
+        COUNT(*) >1
+)
+SELECT
+    MODEL_NM,
+    COUNT(MODEL_NM) COUNTS
+FROM (
+    SELECT DISTINCT
+        CUST_ID,
+        FIRST_NM,
+        LAST_NM,
+        MEMBER_NUM,
+        AGRMNT_NUM,
+        MODEL_NM,
+        MAKE_NM
+    FROM CAR_MODEL
+    INNER JOIN REPEAT
+    ON MEM_NUM=MEMBER_NUM
+    WHERE
+        MODEL_NM IS NOT NULL
+        AND MAKE_NM IS NOT NULL
+)
+GROUP BY
+    MODEL_NM
+ORDER BY
+    COUNTS DESC
